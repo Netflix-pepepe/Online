@@ -241,7 +241,7 @@ td {
       <div class="portal-card"><h2>機能</h2><p>🔍 高速トリップ検索（正規表現・二重検索） ／ 📊 個人戦績 ／ 🏆 ランキング ／ 👥 同村関係 ／ 🏘️ ゲーム解析 ／ 🤖 発言スタイル解析 ／ 👤 プロフィール ／ 📝 Wiki ／ 💬 掲示板 ／ 💾 JSON入出力（サンプルデータは生成しません）</p></div>
     </section>
     <section class="portal-panel" data-panel="player"><div class="portal-card"><h2>📊 個人戦績</h2><p class="portal-muted">公開ログ検索APIから実データを取得します。サンプル戦績は一切表示しません。GitHub Pagesでは直接接続し、CORSで拒否された場合だけ自動プロキシを試します。</p><div class="portal-grid"><input id="playerQuery" class="portal-input" placeholder="名前またはトリップ（例：サプリ / ◇SuppleLohk）"><select id="playerMode" class="portal-select"><option value="name">名前</option><option value="trip">トリップ</option></select></div><div class="portal-actions"><button class="portal-btn" id="playerSearchBtn">🔎 実データを検索</button></div><div id="playerRemoteStatus" class="portal-muted"></div></div><div id="playerResult"></div></section>
-    <section class="portal-panel" data-panel="ranking"><div class="portal-card"><h2>🏆 ランキング</h2><p class="portal-muted">検索で取得した実ログだけを集計します。架空のプレイヤーは表示しません。検索対象を増やすほどランキングが蓄積されます。</p><div class="portal-grid"><select id="rankGroup" class="portal-select"><option value="name">名前別</option><option value="trip">トリップ別</option></select><select id="rankMetric" class="portal-select"><option value="games">参戦数</option><option value="wins">勝利数</option><option value="rate">勝率</option><option value="speech">発言数</option></select><select id="rankPeriod" class="portal-select"><option value="all">通算</option><option value="month">今月</option><option value="year">今年</option></select></div><p class="portal-muted">同じ名前の複数トリップは名前別で合算、同じトリップを複数の名前で使っている場合はトリップ別で合算します。最低戦数を指定しないため、1戦のみの記録も表示対象です。</p></div><div class="portal-card"><table class="portal-table"><thead><tr><th>#</th><th id="rankingMainHead">名前</th><th>戦数</th><th>勝利</th><th>勝率</th><th>発言</th><th>活動期間</th></tr></thead><tbody id="rankingBody"></tbody></table></div></section>
+    <section class="portal-panel" data-panel="ranking"><div class="portal-card"><h2>🏆 ランキング</h2><p class="portal-muted">検索で取得した実ログだけを集計します。架空のプレイヤーは表示しません。検索対象を増やすほどランキングが蓄積されます。</p><div class="portal-grid"><select id="rankGroup" class="portal-select"><option value="name">名前別</option><option value="trip">トリップ別</option></select><select id="rankMetric" class="portal-select"><option value="games">参戦数</option><option value="wins">勝利数</option><option value="rate">勝率</option><option value="speech">発言数</option></select><select id="rankPeriod" class="portal-select"><option value="all">通算</option><option value="month">今月</option><option value="year">今年</option></select></div><p class="portal-muted">名前別は同名の全トリップを合算、トリップ別は同一トリップの全名前を合算します。初日犠牲者などのシステム枠は除外します。</p></div><div class="portal-card"><table class="portal-table"><thead><tr><th>#</th><th id="rankingMainHead">名前</th><th>戦数</th><th>勝利</th><th>勝率</th><th>発言</th><th>活動期間</th></tr></thead><tbody id="rankingBody"></tbody></table></div></section>
     <section class="portal-panel" data-panel="relations"><div class="portal-card"><h2>👥 同村・関係解析</h2><input id="relationQuery" class="portal-input" placeholder="プレイヤー名またはトリップ"><div class="portal-actions"><button class="portal-btn" id="relationBtn">解析</button></div></div><div id="relationResult"></div></section>
     <section class="portal-panel" data-panel="games"><div class="portal-card"><h2>🏘️ ゲームログ解析</h2><input id="gameQuery" class="portal-input" placeholder="ゲームID・村名・プレイヤー・トリップ"><div class="portal-actions"><button class="portal-btn" id="gameSearchBtn">検索</button></div></div><div id="gameResult"></div></section>
     <section class="portal-panel" data-panel="ai"><div class="portal-card"><h2>🤖 プレイヤー解析</h2><p class="portal-muted">発言量・質問・他者言及・根拠語などをログから機械集計する簡易版です。勝敗から人格や実力を断定するものではありません。</p><input id="aiQuery" class="portal-input" placeholder="プレイヤー名・トリップ"><div class="portal-actions"><button class="portal-btn" id="aiBtn">解析</button></div></div><div id="aiResult"></div></section>
@@ -1582,8 +1582,15 @@ function remotePlayerStats(logs, target, mode){
  const roleRows=Object.keys(roles).sort().map(r=>`<tr><td>${esc(r)}</td><td>${roles[r]}</td><td>${roleWins[r]||0}</td><td>${(((roleWins[r]||0)/roles[r])*100).toFixed(1)}%</td></tr>`).join('');
  const recent=games.slice().reverse().slice(0,30).map(x=>`<tr><td>${esc(x.g.date||'')}</td><td>${esc(x.g.room_name||('ゲーム#'+x.g.id))}</td><td>${esc(x.role)}</td><td>${x.win?'勝利':'敗北'}</td><td>${esc(String(x.g.id))}</td></tr>`).join('');
  const displayName=mode==='name'?String(target):String(games[0].hit.name||'—');
- const displayTrip=mode==='trip'?'◇'+targetNorm:normalizeTrip(games[0].hit.trip||'');
- return `<div class="portal-card"><h3>${esc(displayName)} <span class="portal-badge">${esc(displayTrip)}</span></h3><div class="portal-grid"><div class="portal-stat">総参戦数<strong>${total}</strong></div><div class="portal-stat">勝利<strong>${wins}</strong></div><div class="portal-stat">勝率<strong>${(wins/total*100).toFixed(1)}%</strong></div><div class="portal-stat">発言数<strong>${speech}</strong></div></div><h4>${mode==='name'?'トリップ別戦績':'名前別戦績'}</h4><table class="portal-table"><thead><tr><th>${mode==='name'?'トリップ':'名前'}</th><th>戦数</th><th>勝利</th><th>勝率</th></tr></thead><tbody>${variantRows}</tbody></table><h4>役職別勝敗</h4><table class="portal-table"><thead><tr><th>役職</th><th>戦数</th><th>勝利</th><th>勝率</th></tr></thead><tbody>${roleRows}</tbody></table><h4>参戦ログ</h4><table class="portal-table"><thead><tr><th>日時</th><th>村</th><th>役職</th><th>結果</th><th>ID</th></tr></thead><tbody>${recent}</tbody></table></div>`;
+ const tripLabels=[...new Set(games.map(x=>String(x.hit.trip||'').trim().replace(/^[◆◇]/,'')).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+ const nameLabels=[...new Set(games.map(x=>String(x.hit.name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+ const identity=mode==='name'
+   ? (tripLabels.length===1 ? `◇${tripLabels[0]}` : `トリップ ${tripLabels.length}種類`)
+   : `名前 ${nameLabels.length}種類`;
+ const detailNote=mode==='name'
+   ? `この名前で確認できたトリップを合算しています（${tripLabels.length}種類）。`
+   : `このトリップで確認できた名前を合算しています（${nameLabels.length}種類）。`;
+ return `<div class="portal-card"><h3>${esc(displayName)} <span class="portal-badge">${esc(identity)}</span></h3><p class="portal-muted">${esc(detailNote)}</p><div class="portal-grid"><div class="portal-stat">総参戦数<strong>${total}</strong></div><div class="portal-stat">勝利<strong>${wins}</strong></div><div class="portal-stat">勝率<strong>${(wins/total*100).toFixed(1)}%</strong></div><div class="portal-stat">発言数<strong>${speech}</strong></div></div><h4>${mode==='name'?'トリップ別戦績':'名前別戦績'}</h4><table class="portal-table"><thead><tr><th>${mode==='name'?'トリップ':'名前'}</th><th>戦数</th><th>勝利</th><th>勝率</th></tr></thead><tbody>${variantRows}</tbody></table><h4>役職別勝敗</h4><table class="portal-table"><thead><tr><th>役職</th><th>戦数</th><th>勝利</th><th>勝率</th></tr></thead><tbody>${roleRows}</tbody></table><h4>参戦ログ</h4><table class="portal-table"><thead><tr><th>日時</th><th>村</th><th>役職</th><th>結果</th><th>ID</th></tr></thead><tbody>${recent}</tbody></table></div>`;
 }
 const PUBLIC_LOG_API='https://ss1.xrea.com/zinrostats.s205.xrea.com/log_search';
 const CORS_PROXIES=[
@@ -1639,7 +1646,9 @@ async function renderRanking(){
    for(const p of (Array.isArray(g.players)?g.players:[])){
      const name=String(p.name||'').trim();
      const trip=String(p.trip||'').trim().replace(/^[◆◇]/,'');
+     // システム用の初日犠牲者等はプレイヤーランキングから除外
      if(!name && !trip) continue;
+     if(name==='初日犠牲者' || name==='GM' || name==='ＧＭ') continue;
      const label=group==='trip' ? trip : name;
      if(!label) continue;
      const key=label;
@@ -1658,7 +1667,9 @@ async function renderRanking(){
  rows.sort((a,b)=>(metric==='wins'?b.wins-a.wins:metric==='rate'?b.rate-a.rate:metric==='speech'?b.speech-a.speech:b.games-a.games)||a.label.localeCompare(b.label,'ja'));
  body.innerHTML=rows.slice(0,100).map((p,i)=>{
    const span=p.first&&p.last?`${p.first.toLocaleDateString('ja-JP')} ～ ${p.last.toLocaleDateString('ja-JP')}`:'—';
-   const sub=group==='name'?[...p.trips].slice(0,3).map(t=>'◇'+t).join(' / '):[...p.names].slice(0,3).join(' / ');
+   const sub=group==='name'
+     ? [...p.trips].map(t=>'◇'+t).slice(0,8).join(' / ')+(p.trips.size>8?` / 他${p.trips.size-8}種`:'')
+     : [...p.names].slice(0,8).join(' / ')+(p.names.size>8?` / 他${p.names.size-8}名`:'');
    return `<tr><td>${i+1}</td><td><b>${esc(p.label)}</b><br><small class="portal-muted">${esc(sub||'—')}</small></td><td>${p.games}</td><td>${p.wins}</td><td>${p.rate.toFixed(1)}%</td><td>${p.speech}</td><td><small>${esc(span)}</small></td></tr>`;
  }).join('')||'<tr><td colspan="7">まだ実データがありません。個人戦績で名前またはトリップを検索してください。</td></tr>';
 }
