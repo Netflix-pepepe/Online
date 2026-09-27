@@ -236,12 +236,12 @@ td {
   </div>
   <div id="portalPanels">
     <section class="portal-panel active" data-panel="about">
-      <div class="portal-card"><h1>🐺 人狼オンライン データベース</h1><p>トリップ検索を中心に、戦績・ランキング・同村関係・ゲームログ・プレイヤー解析・Wiki・掲示板を1ページにまとめた総合ツールです。</p><div class="notice">戦績はこのサイトに同梱されたPHPバックエンドのサーバーDBから取得します。API URLなどの設定は不要です。</div></div>
+      <div class="portal-card"><h1>🐺 人狼オンライン データベース <span class="portal-badge">v4</span></h1><p>トリップ検索を中心に、戦績・ランキング・同村関係・ゲームログ・プレイヤー解析・Wiki・掲示板を1ページにまとめた総合ツールです。</p><div class="notice">戦績はこのサイトに同梱されたPHPバックエンドのサーバーDBから取得します。API URLなどの設定は不要です。</div></div>
       <div class="portal-grid"><div class="portal-stat">登録プレイヤー<strong id="statPlayers">0</strong></div><div class="portal-stat">ゲーム数<strong id="statGames">0</strong></div><div class="portal-stat">総参戦数<strong id="statParticipations">0</strong></div><div class="portal-stat">掲示板投稿<strong id="statPosts">0</strong></div></div>
       <div class="portal-card"><h2>機能</h2><p>🔍 高速トリップ検索（正規表現・二重検索） ／ 📊 個人戦績 ／ 🏆 ランキング ／ 👥 同村関係 ／ 🏘️ ゲーム解析 ／ 🤖 発言スタイル解析 ／ 👤 プロフィール ／ 📝 Wiki ／ 💬 掲示板 ／ 💾 JSON入出力（サンプルデータは生成しません）</p></div>
     </section>
     <section class="portal-panel" data-panel="player"><div class="portal-card"><h2>📊 個人戦績</h2><p class="portal-muted">公開ログ検索APIから実データを取得します。サンプル戦績は一切表示しません。GitHub Pagesでは直接接続し、CORSで拒否された場合だけ自動プロキシを試します。</p><div class="portal-grid"><input id="playerQuery" class="portal-input" placeholder="名前またはトリップ（例：サプリ / ◇SuppleLohk）"><select id="playerMode" class="portal-select"><option value="name">名前</option><option value="trip">トリップ</option></select></div><div class="portal-actions"><button class="portal-btn" id="playerSearchBtn">🔎 実データを検索</button></div><div id="playerRemoteStatus" class="portal-muted"></div></div><div id="playerResult"></div></section>
-    <section class="portal-panel" data-panel="ranking"><div class="portal-card"><h2>🏆 ランキング</h2><p class="portal-muted">検索で取得した実ログだけを集計します。架空のプレイヤーは表示しません。検索対象を増やすほどランキングが蓄積されます。</p><div class="portal-grid"><select id="rankGroup" class="portal-select"><option value="name">名前別</option><option value="trip">トリップ別</option></select><select id="rankMetric" class="portal-select"><option value="games">参戦数</option><option value="wins">勝利数</option><option value="rate">勝率</option><option value="speech">発言数</option></select><select id="rankPeriod" class="portal-select"><option value="all">通算</option><option value="month">今月</option><option value="year">今年</option></select></div><p class="portal-muted">名前別は同名の全トリップを合算、トリップ別は同一トリップの全名前を合算します。初日犠牲者などのシステム枠は除外します。</p></div><div class="portal-card"><table class="portal-table"><thead><tr><th>#</th><th id="rankingMainHead">名前</th><th>戦数</th><th>勝利</th><th>勝率</th><th>発言</th><th>活動期間</th></tr></thead><tbody id="rankingBody"></tbody></table></div></section>
+    <section class="portal-panel" data-panel="ranking"><div class="portal-card"><h2>🏆 ランキング <span class="portal-badge">v4</span></h2><p class="portal-muted">実ログの参加者を「名前」と「トリップ」で完全に分けて集計します。名前ランキングでは同じ名前の全トリップを合算し、トリップランキングでは同じトリップの全名前を合算します。</p><div class="portal-actions"><button class="portal-btn rank-group-btn active" data-group="name">👤 名前別</button><button class="portal-btn secondary rank-group-btn" data-group="trip">◇ トリップ別</button></div><div class="portal-grid"><select id="rankMetric" class="portal-select"><option value="games">参戦数</option><option value="wins">勝利数</option><option value="rate">勝率</option><option value="speech">発言数</option></select><select id="rankPeriod" class="portal-select"><option value="all">通算</option><option value="month">今月</option><option value="year">今年</option></select></div><p id="rankingExplain" class="portal-muted">名前ごとに何戦したかを集計しています。</p></div><div class="portal-card"><table class="portal-table"><thead><tr><th>#</th><th id="rankingMainHead">名前</th><th>戦数</th><th>勝利</th><th>勝率</th><th>発言</th><th>活動期間</th></tr></thead><tbody id="rankingBody"></tbody></table></div></section>
     <section class="portal-panel" data-panel="relations"><div class="portal-card"><h2>👥 同村・関係解析</h2><input id="relationQuery" class="portal-input" placeholder="プレイヤー名またはトリップ"><div class="portal-actions"><button class="portal-btn" id="relationBtn">解析</button></div></div><div id="relationResult"></div></section>
     <section class="portal-panel" data-panel="games"><div class="portal-card"><h2>🏘️ ゲームログ解析</h2><input id="gameQuery" class="portal-input" placeholder="ゲームID・村名・プレイヤー・トリップ"><div class="portal-actions"><button class="portal-btn" id="gameSearchBtn">検索</button></div></div><div id="gameResult"></div></section>
     <section class="portal-panel" data-panel="ai"><div class="portal-card"><h2>🤖 プレイヤー解析</h2><p class="portal-muted">発言量・質問・他者言及・根拠語などをログから機械集計する簡易版です。勝敗から人格や実力を断定するものではありません。</p><input id="aiQuery" class="portal-input" placeholder="プレイヤー名・トリップ"><div class="portal-actions"><button class="portal-btn" id="aiBtn">解析</button></div></div><div id="aiResult"></div></section>
@@ -1634,26 +1634,34 @@ async function searchRemotePlayer(){
 
 async function renderRanking(){
  const metric=document.getElementById('rankMetric')?.value||'games';
- const group=document.getElementById('rankGroup')?.value||'name';
+ const group=window.__rankGroup||'name';
  const period=document.getElementById('rankPeriod')?.value||'all';
  const body=document.getElementById('rankingBody');
  const head=document.getElementById('rankingMainHead');
+ const explain=document.getElementById('rankingExplain');
  if(head) head.textContent=group==='trip'?'トリップ':'名前';
+ if(explain) explain.textContent=group==='name'
+   ? '名前ごとに何戦したかを集計。別トリップでも同じ名前なら1人分に合算します。'
+   : 'トリップごとに何戦したかを集計。別名義でも同じトリップなら1つに合算します。';
  const cutoff=period==='month'?new Date(new Date().getFullYear(),new Date().getMonth(),1):period==='year'?new Date(new Date().getFullYear(),0,1):null;
  const map=new Map();
+ const systemNames=new Set(['初日犠牲者','GM','ＧＭ','ゲームマスター','ＧＭ役']);
  for(const g of remoteLogs){
    const dt=new Date(g.date||0); if(cutoff && (!dt.getTime()||dt<cutoff)) continue;
+   const seen=new Set();
    for(const p of (Array.isArray(g.players)?g.players:[])){
      const name=String(p.name||'').trim();
      const trip=String(p.trip||'').trim().replace(/^[◆◇]/,'');
-     // システム用の初日犠牲者等はプレイヤーランキングから除外
-     if(!name && !trip) continue;
-     if(name==='初日犠牲者' || name==='GM' || name==='ＧＭ') continue;
-     const label=group==='trip' ? trip : name;
+     if(systemNames.has(name) || (!name && !trip)) continue;
+     const label=group==='trip'?trip:name;
      if(!label) continue;
-     const key=label;
-     let x=map.get(key);
-     if(!x){x={label, names:new Set(), trips:new Set(), games:0,wins:0,speech:0,first:null,last:null};map.set(key,x)}
+     // 同一ゲーム内に同一名/トリップが重複している異常ログは1戦だけ数える
+     const participationKey=group+'\0'+label;
+     if(seen.has(participationKey)) continue;
+     seen.add(participationKey);
+     let x=map.get(label);
+     if(!x)x={label,names:new Set(),trips:new Set(),games:0,wins:0,speech:0,first:null,last:null};
+     map.set(label,x);
      if(name)x.names.add(name); if(trip)x.trips.add(trip);
      x.games++; x.speech+=Number(p.mes||0);
      const role=String(p.job||'');
@@ -1667,12 +1675,10 @@ async function renderRanking(){
  rows.sort((a,b)=>(metric==='wins'?b.wins-a.wins:metric==='rate'?b.rate-a.rate:metric==='speech'?b.speech-a.speech:b.games-a.games)||a.label.localeCompare(b.label,'ja'));
  body.innerHTML=rows.slice(0,100).map((p,i)=>{
    const span=p.first&&p.last?`${p.first.toLocaleDateString('ja-JP')} ～ ${p.last.toLocaleDateString('ja-JP')}`:'—';
-   const sub=group==='name'
-     ? [...p.trips].map(t=>'◇'+t).slice(0,8).join(' / ')+(p.trips.size>8?` / 他${p.trips.size-8}種`:'')
-     : [...p.names].slice(0,8).join(' / ')+(p.names.size>8?` / 他${p.names.size-8}名`:'');
-   return `<tr><td>${i+1}</td><td><b>${esc(p.label)}</b><br><small class="portal-muted">${esc(sub||'—')}</small></td><td>${p.games}</td><td>${p.wins}</td><td>${p.rate.toFixed(1)}%</td><td>${p.speech}</td><td><small>${esc(span)}</small></td></tr>`;
+   return `<tr><td>${i+1}</td><td><b>${esc(group==='trip'?'◇'+p.label:p.label)}</b><br><small class="portal-muted">${group==='name' ? esc(`使用トリップ ${p.trips.size}種類`) : esc(`使用名義 ${p.names.size}種類`)}</small></td><td>${p.games}</td><td>${p.wins}</td><td>${p.rate.toFixed(1)}%</td><td>${p.speech}</td><td><small>${esc(span)}</small></td></tr>`;
  }).join('')||'<tr><td colspan="7">まだ実データがありません。個人戦績で名前またはトリップを検索してください。</td></tr>';
 }
+
 function renderRelations(){const q=document.getElementById('relationQuery').value.trim();const ps=findPlayers(q);if(!ps[0]){document.getElementById('relationResult').innerHTML='<div class="portal-card">対象プレイヤーが見つかりません。</div>';return}const target=ps[0],counts={};db.games.forEach(g=>{if((g.players||[]).includes(target.id))g.players.forEach(id=>{if(id!==target.id)counts[id]=(counts[id]||0)+1})});const rows=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([id,n])=>{const p=db.players.find(x=>x.id===id);return `<div class="rel"><span>${esc(p?.name||id)} <small>${esc(p?.trip||'')}</small></span><b>${n}回</b></div>`}).join('');document.getElementById('relationResult').innerHTML=`<div class="portal-card"><h3>${esc(target.name)} の同村ランキング</h3>${rows||'同村データなし'}</div>`}
 function renderGames(){const q=document.getElementById('gameQuery').value.trim().toLowerCase();const gs=db.games.filter(g=>!q||(g.id+' '+g.name+' '+(g.players||[]).map(id=>db.players.find(p=>p.id===id)?.name||'').join(' ')).toLowerCase().includes(q));document.getElementById('gameResult').innerHTML=gs.map(g=>`<div class="portal-card"><h3>${esc(g.name)} <span class="portal-badge">${esc(g.id)}</span></h3><p>${esc(g.date)} / 勝利陣営: ${esc(g.winner)} / MVP: ${esc(db.players.find(p=>p.id===g.mvp)?.name||'—')}</p><p>${esc(g.log)}</p></div>`).join('')||'<div class="portal-card">ゲームなし</div>'}
 function renderAI(){const ps=findPlayers(document.getElementById('aiQuery').value.trim());document.getElementById('aiResult').innerHTML=ps.map(p=>{const s=p.style||{};return `<div class="portal-card"><h3>${esc(p.name)}</h3>${[['発言量',s.speech||0],['質問',s.question||0],['他者言及',s.mention||0],['根拠語',s.evidence||0]].map(x=>`<p>${x[0]}: ${x[1]}<div class="mini-bar"><i style="width:${Math.min(100,(x[1]||0)/10)}%"></i></div></p>`).join('')}<p class="portal-muted">ゲーム参加データからの集計です。</p></div>`}).join('')||'<div class="portal-card">対象プレイヤーなし</div>'}
@@ -1683,7 +1689,7 @@ async function checkStatsApi(){const out=document.getElementById('statsSyncStatu
 function restoreStatsApiSettings(){}
 function bindPortal(){
  document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.portal-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');const t=b.dataset.tab;document.querySelectorAll('.portal-panel').forEach(x=>x.classList.toggle('active',x.dataset.panel===t));document.getElementById('searchPanel').classList.toggle('portal-search-hidden',t!=='search');if(t==='player')renderPlayer();if(t==='ranking')renderRanking();if(t==='games')renderGames();if(t==='ai')renderAI();});
- document.getElementById('playerSearchBtn').onclick=searchRemotePlayer;document.getElementById('rankMetric').onchange=renderRanking;document.getElementById('rankGroup').onchange=renderRanking;document.getElementById('relationBtn').onclick=renderRelations;document.getElementById('gameSearchBtn').onclick=renderGames;document.getElementById('aiBtn').onclick=renderAI;
+ document.getElementById('playerSearchBtn').onclick=searchRemotePlayer;window.__rankGroup='name';document.querySelectorAll('.rank-group-btn').forEach(b=>b.onclick=()=>{window.__rankGroup=b.dataset.group;document.querySelectorAll('.rank-group-btn').forEach(x=>{x.classList.toggle('active',x===b);x.classList.toggle('secondary',x!==b)});renderRanking();});document.getElementById('rankMetric').onchange=renderRanking;document.getElementById('rankPeriod').onchange=renderRanking;document.getElementById('relationBtn').onclick=renderRelations;document.getElementById('gameSearchBtn').onclick=renderGames;document.getElementById('aiBtn').onclick=renderAI;
  document.getElementById('profileSave').onclick=()=>{const t=document.getElementById('profileTrip').value.trim();if(!t)return;db.profiles[t]={name:document.getElementById('profileName').value,intro:document.getElementById('profileIntro').value,x:document.getElementById('profileX').value};saveDB();alert('プロフィールを保存しました。')};
  document.getElementById('wikiSave').onclick=()=>{const t=document.getElementById('wikiTrip').value.trim();if(!t)return;db.wiki[t]=document.getElementById('wikiText').value;saveDB();alert('Wikiを保存しました。')};
  document.getElementById('postBtn').onclick=()=>{const text=document.getElementById('postText').value.trim();if(!text)return;db.posts.push({name:document.getElementById('postName').value||'名無し',trip:document.getElementById('postTrip').value||'',text,date:new Date().toISOString()});document.getElementById('postText').value='';saveDB()};
